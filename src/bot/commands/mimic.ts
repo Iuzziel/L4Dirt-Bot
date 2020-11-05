@@ -6,27 +6,33 @@ const mimic: ICommands = {
     roles: ['@admin'],
     description: 'Mimic the command sender voice status for all people in voice channel.',
     guildOnly: true,
-    execute(message: Message) {
-        if (message.member?.roles.highest.id !== message.guild?.roles.highest.id) return;
+    execute(command: Message, args: string[] = []) {
+        if (command.member?.roles.highest.id !== command.guild?.roles.highest.id) return;
 
-        const cb = (oldState: VoiceState, newState: VoiceState) => {
-            if (message.author.id === oldState.id) {
-                const channel = message.guild?.channels.cache
-                    .find(channel => channel.type === 'voice' && channel.members.some(member => member.id === message.author.id))
+        const _mimic = (oldState: VoiceState, newState: VoiceState) => {
+            if (command.author.id === oldState.id) {
+                const channel = command.guild?.channels.cache
+                    .find(channel => channel.type === 'voice' && channel.members.some(member => member.id === command.author.id))
                 if (channel === undefined) return;
                 const members = channel.members;
                 members.forEach(member => {
-                    if (member.id !== message.author.id) {
-                        member.voice.setMute(!!newState.selfMute);
+                    if (member.id !== command.author.id) {
+                        member.voice.setSelfMute(!!newState.selfMute);
                     } else {
-                        message.channel.send(`Server ${newState.mute ? 'muted' : 'unmuted'} by ${message.author.username}`)
+                        command.channel.send(`Server ${newState.mute ? 'muted' : 'unmuted'} by ${command.author.username}`)
                             .then(_message => setTimeout(() => _message.delete(), 5000));
                     }
                 });
             }
         }
-        message.author.client.off('voiceStateUpdate', cb);
-        message.author.client.on('voiceStateUpdate', cb);
+
+        if ((command.author.client.listeners('voiceStateUpdate').length > 0 && command.author.client.listeners('voiceStateUpdate').some(_listener => _listener.name === '_mimic'))
+            || (args.length > 0 && args.some(arg => arg.toLowerCase() === 'off'))) {
+            command.channel.send(`Stop mimic voice status on user ${command.author.username}`);
+            return command.author.client.off('voiceStateUpdate', _mimic);
+        }
+        command.channel.send(`Mimic voice status on user ${command.author.username}`);
+        return command.author.client.on('voiceStateUpdate', _mimic);
     }
 };
 export default mimic;
