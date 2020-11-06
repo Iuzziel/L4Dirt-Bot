@@ -106,6 +106,7 @@ export class Left4DirtBot {
     }
 
     private onReadyStateReached() {
+        this.botInstance.sweepMessages();
         console.log(`${this.botInstance.user?.username} est en ligne`);
         return this.botInstance.user?.setActivity(`Alive. Type ${botConfig.prefix[0]}help for further info.`);
     }
