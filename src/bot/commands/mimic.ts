@@ -17,7 +17,7 @@ const mimic: ICommands = {
                 const members = channel.members;
                 members.forEach(member => {
                     if (member.id !== command.author.id) {
-                        member.voice.setSelfMute(!!newState.selfMute);
+                        member.voice.setMute(!!newState.selfMute);
                     } else {
                         command.channel.send(`Server ${newState.mute ? 'muted' : 'unmuted'} by ${command.author.username}`)
                             .then(_message => setTimeout(() => _message.delete(), 5000));
@@ -29,10 +29,11 @@ const mimic: ICommands = {
         if ((command.author.client.listeners('voiceStateUpdate').length > 0 && command.author.client.listeners('voiceStateUpdate').some(_listener => _listener.name === '_mimic'))
             || (args.length > 0 && args.some(arg => arg.toLowerCase() === 'off'))) {
             command.channel.send(`Stop mimic voice status on all user, required by ${command.author.username}`);
-            return command.author.client.removeAllListeners('voiceStateUpdate');
+            command.author.client.removeAllListeners('voiceStateUpdate');
+        } else {
+            command.channel.send(`Mimic voice status on user ${command.author.username}`);
+            command.author.client.on('voiceStateUpdate', _mimic);
         }
-        command.channel.send(`Mimic voice status on user ${command.author.username}`);
-        return command.author.client.on('voiceStateUpdate', _mimic);
     }
 };
 export default mimic;
