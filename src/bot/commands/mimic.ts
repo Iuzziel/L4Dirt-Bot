@@ -28,8 +28,8 @@ const mimic: ICommands = {
 
         if ((command.author.client.listeners('voiceStateUpdate').length > 0 && command.author.client.listeners('voiceStateUpdate').some(_listener => _listener.name === '_mimic'))
             || (args.length > 0 && args.some(arg => arg.toLowerCase() === 'off'))) {
-            command.channel.send(`Stop mimic voice status on user ${command.author.username}`);
-            return command.author.client.off('voiceStateUpdate', _mimic);
+            command.channel.send(`Stop mimic voice status on all user, required by ${command.author.username}`);
+            return command.author.client.removeAllListeners('voiceStateUpdate');
         }
         command.channel.send(`Mimic voice status on user ${command.author.username}`);
         return command.author.client.on('voiceStateUpdate', _mimic);
