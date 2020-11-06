@@ -15,14 +15,13 @@ const mimic: ICommands = {
                     .find(channel => channel.type === 'voice' && channel.members.some(member => member.id === command.author.id))
                 if (channel === undefined) return;
                 const members = channel.members;
-                members.forEach(member => {
-                    if (member.id !== command.author.id) {
+                for (const [_id, member] of members.entries()) {
+                    if (member.id !== command.author.id)
                         member.voice.setMute(!!newState.selfMute);
-                    } else {
+                    else
                         command.channel.send(`Server ${newState.mute ? 'muted' : 'unmuted'} by ${command.author.username}`)
                             .then(_message => setTimeout(() => _message.delete(), 5000));
-                    }
-                });
+                }
             }
         }
 
