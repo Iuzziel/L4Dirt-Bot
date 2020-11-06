@@ -1,6 +1,6 @@
 import http from 'http';
 
-export const server = http.createServer((req, res) => {
+export const server: http.Server = http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.write(JSON.stringify({ isAlive: true, name: 'Left4Dirt-Bot', fetched: new Date().toUTCString() }));
     res.end();

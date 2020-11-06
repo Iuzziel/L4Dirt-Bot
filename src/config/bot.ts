@@ -27,13 +27,19 @@ export let botConfig: IBotConfig = ((): IBotConfig => {
         if (process.env.L4DB_DISCORD_GCD) {
             _configuration.globalCooldown = Number.parseInt(process.env.L4DB_DISCORD_GCD);
         }
+        if (process.env.L4DB_DISCORD_LOG_CHANNEL_ID) {
+            Object.assign(_configuration, { log: { channelId: process.env.L4DB_DISCORD_LOG_CHANNEL_ID } });
+        }
     }
     return _configuration;
 })()
 
 interface IBotConfig {
-    "token": string,
-    "prefix": Array<string>,
-    "weatherApiKey": string,
-    "globalCooldown": number
+    token: string,
+    prefix: Array<string>,
+    weatherApiKey: string,
+    globalCooldown: number,
+    log?: {
+        channelId: string
+    }
 }
