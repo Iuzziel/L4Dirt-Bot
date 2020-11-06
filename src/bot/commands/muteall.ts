@@ -4,7 +4,7 @@ import { ICommands } from ".";
 const muteall: ICommands = {
     name: 'muteall',
     roles: ['@admin'],
-    description: 'Mute all people in voice channel of the command sender.',
+    description: 'Couper le son de toutes les personnes dans le canal vocal de l\'expéditeur de la commande.',
     execute(message: Message) {
         if (!message.member || !message.guild) return;
         if (message.member?.roles.highest.id !== message.guild?.roles.highest.id) return;
@@ -14,7 +14,7 @@ const muteall: ICommands = {
             .forEach(member => {
                 member?.voice.setSelfMute(true);
             });
-        message.channel.send('Server muted');
+        message.channel.send('Serveur en sourdine.');
     },
 };
 export default muteall;

@@ -1,0 +1,41 @@
+body {
+	margin: 0px;
+	padding: 0px;
+	color: white;
+	background: #000046;
+	background: -webkit-linear-gradient(to right, #000046, #1CB5E0);
+	background: linear-gradient(to right, #000046, #1CB5E0);
+}
+
+header {
+	grid-area: header;
+	text-align: center;
+}
+
+main {
+	grid-area: main;
+	display: grid;
+	grid: auto-flow dense min-content / [line1] minmax(5em, max-content);
+	grid-gap: 1rem;
+}
+
+footer {
+	text-align: center;
+	grid-area: footer;
+}
+
+#app {
+	height: 100%;
+	padding: 1rem;
+}
+
+.round-button {
+	border: 2px solid black;
+	border-radius: 5px;
+	font-size: 1rem;
+	text-align: center;
+}
+
+.round-button:hover {
+	box-shadow: .15em .15em .1em #888888;
+}

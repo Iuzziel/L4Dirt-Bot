@@ -1,5 +1,5 @@
 import Discord, { Message, TextChannel } from 'discord.js';
-import commands, { ICommands } from './commands';
+import commands, { ICommands, isRoleCheckOk } from './commands';
 import { botConfig } from '../config/bot';
 
 export class Left4DirtBot {
@@ -48,7 +48,7 @@ export class Left4DirtBot {
         this.parseAndExecuteCommand(message);
     }
 
-    private parseAndExecuteCommand(message: Discord.Message) {
+    private parseAndExecuteCommand(message: Discord.Message): Promise<unknown> {
         return new Promise((resolve, reject) => {
             let isACommand = false;
             let usedPrefix = "";
@@ -67,12 +67,15 @@ export class Left4DirtBot {
             const cmdFound = this.commands.find(cmd => cmd.name === cmdAsked || cmd.aliases && cmd.aliases.includes(cmdAsked));
             if (!cmdFound) return resolve('Command not found');
 
+            // TODO Prio, make this work
+            // if (!isRoleCheckOk(message, cmdFound.name as keyof typeof commands)) return message.reply('Vous n\'avez pas le rôle requis pour effectuer cette commande !');
+
             if (cmdFound.guildOnly && message.channel.type !== 'text') {
-                return message.reply('Je ne peux pas executer cette commande dans un canal privé!');
+                return message.reply('Je ne peux pas executer cette commande dans un canal privé !');
             }
 
             if (cmdFound.argsRequired && args.length === 0) {
-                let reply = `${message.author}, vous n'avez fournis aucun argument!`;
+                let reply = `${message.author}, vous n'avez fournis aucun argument !`;
                 if (cmdFound.usage) {
                     reply += `\nExemple d'utilisation: \`${usedPrefix}${cmdFound.name} ${cmdFound.usage ? cmdFound.usage : botConfig.prefix[0] + cmdFound.name}\``;
                 }
@@ -87,7 +90,7 @@ export class Left4DirtBot {
                     const expirationDate = cmdLastUsedTimestamp + cooldownAmount;
                     if (now < expirationDate) {
                         const timeLeft = (expirationDate - now) / 1000;
-                        return message.reply(`Attendez ${timeLeft.toFixed(1)} seconde(s) avant de réutiliser la commande: \`${cmdFound.name}\`.`);
+                        return message.reply(`Attendez ${timeLeft.toFixed(1)} seconde${timeLeft > 1 ? 's' : ''} avant de réutiliser la commande: \`${cmdFound.name}\`.`);
                     }
                 }
                 this.cooldownQueue.set(message.author.id, this.cooldownQueue.get(message.author.id)?.set(cmdFound.name, now));
@@ -97,18 +100,18 @@ export class Left4DirtBot {
             setTimeout(() => this.cooldownQueue.get(message.author.id)?.delete(cmdFound.name), cooldownAmount);
 
             try {
+                message.delete();
                 return resolve(cmdFound.execute(message, args));
             } catch (error) {
-                message.reply('Erreur dans l\'éxécution de la command!');
+                message.reply('Erreur dans l\'éxécution de la command !');
                 return reject(error);
             }
         })
     }
 
     private onReadyStateReached() {
-        this.botInstance.sweepMessages();
         console.log(`${this.botInstance.user?.username} est en ligne`);
-        return this.botInstance.user?.setActivity(`Alive. Type ${botConfig.prefix[0]}help for further info.`);
+        return this.botInstance.user?.setActivity(`Taper ${botConfig.prefix[0]}help pour plus de détails.`);
     }
 
     private setAvatar() {

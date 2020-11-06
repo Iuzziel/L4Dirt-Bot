@@ -1,3 +1,5 @@
+import { Message } from 'discord.js';
+
 import argsInfo from './argsInfo';
 import avatar from './avatar';
 import beep from './beep';
@@ -39,6 +41,12 @@ export interface ICommands {
     description: string,
     usage?: string,
     execute: Function
+}
+
+export const isRoleCheckOk = (message: Message, command: keyof typeof commands): boolean => {
+    if (!commands[command].roles) return true;
+    if (commands[command].roles?.some(role => role === '@admin') && message.member?.roles.highest.id !== message.guild?.roles.highest.id) return false;
+    throw new Error('Vérification du rôle échoué, commande inconnue.');
 }
 
 export const getAliasesWithCommandsName = (): Map<string, string> => {

@@ -6,7 +6,7 @@ export const help: ICommands = {
     name: 'help',
     aliases: ['commands'],
     description: 'Liste toute les commandes, ou les infos spécifiques à une commande.',
-    usage: '[command name]',
+    usage: '!help | !help <command name>',
     cooldown: 5,
     execute(message: Message, args: any) {
         const data = [];
@@ -23,13 +23,13 @@ export const help: ICommands = {
             const command = Object.values(commands).find(command => command.name === getAliasesWithCommandsName().get(args[0]));
             if (!command) return;
 
-            data.push(`**Name:** ${command.name}`);
-            if (command.roles) data.push(`**Roles:** ${command.roles.join(', ')}`);
-            if (command.description) data.push(`**Description:** ${command.description}`);
-            if (command.aliases) data.push(`**Aliases:** ${command.aliases.join(', ')}`);
-            if (command.usage) data.push(`**Utilisation:** ${botConfig.prefix}${command.name} ${command.usage}`);
+            data.push(`**Name :** ${command.name}`);
+            if (command.roles) data.push(`**Roles :** ${command.roles.join(', ')}`);
+            if (command.description) data.push(`**Description :** ${command.description}`);
+            if (command.aliases) data.push(`**Aliases :** ${command.aliases.join(', ')}`);
+            if (command.usage) data.push(`**Utilisation :** ${botConfig.prefix}${command.name} ${command.usage}`);
             let _cd = command.cooldown !== undefined ? command.cooldown : botConfig.globalCooldown;
-            data.push(`**Cooldown:** ${_cd} seconde(s)`);
+            data.push(`**Cooldown :** ${_cd} seconde(s)`);
         }
 
         message.author.send(data, { split: true })

@@ -4,7 +4,7 @@ import { ICommands } from '.';
 const mimic: ICommands = {
     name: 'mimic',
     roles: ['@admin'],
-    description: 'Mimic the command sender voice status for all people in voice channel.',
+    description: 'Imiter l\'état de la voix de l\'expéditeur de la commande pour toutes les personnes du canal vocal.',
     guildOnly: true,
     execute(command: Message, args: string[] = []) {
         if (command.member?.roles.highest.id !== command.guild?.roles.highest.id) return;
@@ -19,7 +19,7 @@ const mimic: ICommands = {
                     if (member.id !== command.author.id)
                         member.voice.setMute(!!newState.selfMute);
                     else
-                        command.channel.send(`Server ${newState.mute ? 'muted' : 'unmuted'} by ${command.author.username}`)
+                        command.channel.send(`Serveur ${newState.mute ? 'en sourdine' : 'réactivation de la voix'} demandé par ${command.author.username}`)
                             .then(_message => setTimeout(() => _message.delete(), 5000));
                 }
             }
@@ -27,10 +27,10 @@ const mimic: ICommands = {
 
         if ((command.author.client.listeners('voiceStateUpdate').length > 0 && command.author.client.listeners('voiceStateUpdate').some(_listener => _listener.name === '_mimic'))
             || (args.length > 0 && args.some(arg => arg.toLowerCase() === 'off'))) {
-            command.channel.send(`Stop mimic voice status on all user, required by ${command.author.username}`);
+            command.channel.send(`Arrête de mimer l'état de la voix, action demandé par ${command.author.username}`);
             command.author.client.removeAllListeners('voiceStateUpdate');
         } else {
-            command.channel.send(`Mimic voice status on user ${command.author.username}`);
+            command.channel.send(`Imite l'état de la voix de l'utilisateur ${command.author.username}`);
             command.author.client.on('voiceStateUpdate', _mimic);
         }
     }
