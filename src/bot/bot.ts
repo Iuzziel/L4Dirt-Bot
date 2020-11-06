@@ -45,8 +45,7 @@ export class Left4DirtBot {
     private onMessage(message: Message): void {
         console.log(`[${message.createdAt.toLocaleTimeString()}]${message.guild ? ' - ' + message.guild.name : ''}${message.channel.type !== 'dm' ? ' - ' + (message.channel as TextChannel).name : ''} - ${message.author.username}: ${message.content} `);
         if (message.author.bot) return;
-        this.parseAndExecuteCommand(message)
-            .then(() => message.delete());
+        this.parseAndExecuteCommand(message);
     }
 
     private parseAndExecuteCommand(message: Discord.Message) {
